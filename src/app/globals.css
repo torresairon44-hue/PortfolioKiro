@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-neutral-black: #0A0A0A;
+  --color-neutral-dark-gray: #484848;
+  --color-neutral-offwhite: #C7C7C7;
+  --color-neutral-white: #FFFFFF;
+  --color-surface-dark: #1A1A1A;
+  --color-surface-darker: #222222;
+  --color-accent-red: #9E1F26;
+  --color-accent-gold: #D4B26F;
+
+  --font-display: "Bebas Neue", sans-serif;
+  --font-body: "Manrope", sans-serif;
+  --font-nav: "Inter", sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-full: 100px;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0A0A0A;
+  color: var(--color-neutral-white);
+}
+
+/* Focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-accent-red);
+  outline-offset: 2px;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Infinite marquee animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
