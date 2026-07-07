@@ -1,8 +1,7 @@
 "use client";
 
 import { HeroParallax, type ParallaxProduct } from "@/components/ui/hero-parallax";
-import { siteConfig, features } from "@/lib/constants";
-import ScrollReveal from "@/components/sections/ScrollReveal";
+import { siteConfig } from "@/lib/constants";
 
 /**
  * Seeded pseudo-random number generator (mulberry32).
@@ -157,26 +156,6 @@ const PortfolioGrid = () => {
         }
       />
 
-      {/* ── Skill Grid — scroll-revealed below the project parallax ── */}
-      <ScrollReveal height="150vh" direction="up" className="bg-[radial-gradient(circle_at_center,#1A160E_0%,#0A0A0A_70%)]">
-        <div className="px-6 md:px-12 lg:px-[108px] py-16 border-t border-white/5">
-          <span className="font-body font-medium text-[14px] uppercase tracking-[2px] text-accent-gold block mb-8">
-            Capabilities
-          </span>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {features.map((feature) => (
-              <div key={feature.title} className="flex flex-col gap-2">
-                <h3 className="font-body font-bold text-[16px] text-neutral-white">
-                  {feature.title}
-                </h3>
-                <p className="font-body font-normal text-[13px] leading-[1.5] text-neutral-offwhite">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </ScrollReveal>
     </section>
   );
 };

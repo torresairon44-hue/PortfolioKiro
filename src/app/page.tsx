@@ -39,12 +39,12 @@ function MainContent() {
         </ScrollReveal>
         <ServiceShowcase />
         <PortfolioGrid />
-        <ScrollReveal height="200vh" direction="up">
-          <GithubSection />
+        <ScrollReveal height="200vh" direction="up" className="bg-gradient-to-b from-[#0A0A0A] to-[#140406]">
+          <GithubSection className="bg-transparent" />
         </ScrollReveal>
       </main>
-      <ScrollReveal height="320vh" direction="up">
-        <ContactFooter />
+      <ScrollReveal height="320vh" direction="up" className="bg-gradient-to-b from-[#140406] via-[#1C0507] to-[#2B090C]">
+        <ContactFooter className="bg-transparent" />
       </ScrollReveal>
     </div>
   )

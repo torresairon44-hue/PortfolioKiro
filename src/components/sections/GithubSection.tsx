@@ -14,7 +14,7 @@ const GithubSection = ({ className }: GithubSectionProps) => {
   return (
     <section
       aria-label="GitHub contributions"
-      className={cn("px-6 md:px-12 lg:px-[108px] py-24 flex flex-col items-center gap-8 bg-gradient-to-b from-[#0D161A] via-[#090D0F] to-[#0B0D0E]", className)}
+      className={cn("px-6 md:px-12 lg:px-[108px] py-24 flex flex-col items-center gap-8 bg-transparent", className)}
     >
       <div className="flex w-full max-w-[1100px] flex-col gap-3 text-left md:text-center">
         <span className="font-nav text-[11px] font-semibold uppercase tracking-[0.22em] text-neutral-dark-gray">

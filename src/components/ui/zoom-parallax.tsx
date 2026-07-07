@@ -1,16 +1,58 @@
 'use client';
 
-import { useScroll, useTransform, motion } from 'framer-motion';
+import { useScroll, useTransform, motion, useMotionValueEvent, MotionValue } from 'framer-motion';
 import { useRef } from 'react';
 
 interface Image {
   src: string;
   alt?: string;
+  isVideo?: boolean;
 }
 
 interface ZoomParallaxProps {
   /** Array of images to be displayed in the parallax effect — max 7 images */
   images: Image[];
+}
+
+interface ScrollVideoProps {
+  src: string;
+  scrollYProgress: MotionValue<number>;
+}
+
+function ScrollVideo({ src, scrollYProgress }: ScrollVideoProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const timeoutRef = useRef<any>(null);
+
+  useMotionValueEvent(scrollYProgress, "change", () => {
+    const video = videoRef.current;
+    if (video) {
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        if (videoRef.current && !videoRef.current.paused) {
+          videoRef.current.pause();
+        }
+      }, 150);
+    }
+  });
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      preload="auto"
+      muted
+      loop
+      playsInline
+      className="h-full w-full object-cover"
+    />
+  );
 }
 
 export function ZoomParallax({ images }: ZoomParallaxProps) {
@@ -31,7 +73,7 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
   return (
     <div ref={container} className="relative h-[300vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
-        {images.map(({ src, alt }, index) => {
+        {images.map(({ src, alt, isVideo }, index) => {
           const scale = scales[index % scales.length];
           return (
             <motion.div
@@ -47,11 +89,15 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
               `}
             >
               <div className="relative h-[25vh] w-[25vw]">
-                <img
-                  src={src || '/placeholder.svg'}
-                  alt={alt || `Parallax image ${index + 1}`}
-                  className="h-full w-full object-cover"
-                />
+                {isVideo ? (
+                  <ScrollVideo src={src} scrollYProgress={scrollYProgress} />
+                ) : (
+                  <img
+                    src={src || '/placeholder.svg'}
+                    alt={alt || `Parallax image ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                )}
               </div>
             </motion.div>
           );

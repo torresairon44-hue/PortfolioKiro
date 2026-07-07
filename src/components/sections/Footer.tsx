@@ -36,10 +36,10 @@ const Footer = ({ className }: FooterProps) => {
           <ul className="flex flex-col gap-2">
             {services.slice(0, 4).map((service) => (
               <li
-                key={service}
+                key={service.title}
                 className="font-body font-normal text-[14px] text-neutral-offwhite"
               >
-                {service}
+                {service.title}
               </li>
             ))}
           </ul>

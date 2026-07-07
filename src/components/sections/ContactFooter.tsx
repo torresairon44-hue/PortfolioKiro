@@ -19,9 +19,11 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const TwitterIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+const InstagramIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
   </svg>
 );
 
@@ -41,9 +43,9 @@ const socialLinks = [
     label: "LinkedIn",
   },
   {
-    icon: <TwitterIcon className="w-5 h-5" />,
-    href: siteConfig.socials.twitter,
-    label: "Twitter",
+    icon: <InstagramIcon className="w-5 h-5" />,
+    href: siteConfig.socials.instagram,
+    label: "Instagram",
   },
   {
     icon: <Mail className="w-5 h-5" />,
@@ -62,13 +64,11 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
       <section
         id="contact"
         aria-labelledby="contact-heading"
-        className={cn("relative w-full overflow-hidden bg-gradient-to-b from-[#0B0D0E] via-[#120406] to-[#2B090C]", className)}
+        className={cn("relative w-full overflow-hidden bg-transparent", className)}
       >
-        {/* ─── Top gradient fade from page background ─── */}
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-neutral-black to-transparent pointer-events-none z-10" />
 
         {/* ─── CONTACT HERO ─── */}
-        <div className="border-t border-neutral-dark-gray/40 relative">
+        <div className="relative">
           <div className="px-6 md:px-12 lg:px-[108px] pt-20 pb-16 lg:pt-24 lg:pb-20">
             {/* Label */}
             <p className="font-body font-medium text-[13px] uppercase tracking-[3px] text-accent-red mb-5">
@@ -111,12 +111,13 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
                   <span className="font-body font-medium text-[11px] uppercase tracking-[1.5px] text-neutral-dark-gray">
                     Email
                   </span>
-                  <a
-                    href={`mailto:${siteConfig.email}`}
-                    className="font-body text-[14px] text-neutral-offwhite hover:text-neutral-white transition-colors duration-200"
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(true)}
+                    className="font-body text-[14px] text-neutral-offwhite hover:text-neutral-white transition-colors duration-200 text-left bg-transparent border-none p-0 focus:outline-none"
                   >
                     {siteConfig.email}
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -167,20 +168,34 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
                   building modern web experiences.
                 </p>
                 <div className="flex items-center gap-3 mt-1">
-                  {socialLinks.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={link.label}
-                      className="w-9 h-9 flex items-center justify-center rounded-lg border border-neutral-dark-gray/40 text-neutral-dark-gray hover:border-accent-red hover:text-accent-red transition-all duration-200 hover:scale-110"
-                    >
-                      {link.icon}
-                    </Link>
-                  ))}
+                  {socialLinks.map((link) => {
+                    const isEmail = link.label === "Email";
+                    return isEmail ? (
+                      <button
+                        key={link.label}
+                        type="button"
+                        onClick={() => setModalOpen(true)}
+                        aria-label={link.label}
+                        className="w-9 h-9 flex items-center justify-center rounded-lg border border-neutral-dark-gray/40 text-neutral-dark-gray hover:border-accent-red hover:text-accent-red transition-all duration-200 hover:scale-110 bg-transparent focus:outline-none"
+                      >
+                        {link.icon}
+                      </button>
+                    ) : (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={link.label}
+                        className="w-9 h-9 flex items-center justify-center rounded-lg border border-neutral-dark-gray/40 text-neutral-dark-gray hover:border-accent-red hover:text-accent-red transition-all duration-200 hover:scale-110"
+                      >
+                        {link.icon}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
+
 
               {/* Col 2 — Services */}
               <div className="flex flex-col gap-4">
@@ -190,10 +205,10 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
                 <ul className="flex flex-col gap-2">
                   {services.map((s) => (
                     <li
-                      key={s}
+                      key={s.title}
                       className="font-body text-[13px] text-neutral-dark-gray hover:text-neutral-offwhite transition-colors duration-200 cursor-default"
                     >
-                      {s}
+                      {s.title}
                     </li>
                   ))}
                 </ul>
@@ -267,32 +282,48 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
       {/* ─── Visme Form Modal ─── */}
       {modalOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-neutral-black/85 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-sm"
           onClick={() => setModalOpen(false)}
           role="dialog"
           aria-modal="true"
           aria-label="Contact form"
         >
+          {/* Animation style declaration inside modal wrapper */}
+          <style>{`
+            @keyframes slideUp {
+              0% { opacity: 0; transform: translateY(30px); }
+              100% { opacity: 1; transform: translateY(0); }
+            }
+            .animate-slide-up {
+              animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+          `}</style>
+
           <div
-            className="relative w-[95vw] h-[95vh] overflow-hidden rounded-2xl"
+            className="animate-slide-up relative w-screen h-screen flex flex-col justify-center items-center overflow-hidden bg-transparent"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Close Button positioned top-right of the screen */}
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 z-10 size-10 flex items-center justify-center rounded-full bg-neutral-black/60 text-neutral-white hover:bg-neutral-black transition-colors duration-200"
+              className="absolute top-6 right-6 z-20 size-11 flex items-center justify-center rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-md hover:bg-white hover:text-black hover:border-white transition-all duration-200"
               aria-label="Close contact form"
             >
               <X className="w-5 h-5" />
             </button>
-            <iframe
-              src="https://forms.visme.co/fv/p9nm70vw-q007qvd"
-              width="100%"
-              height="100%"
-              style={{ border: "none", display: "block" }}
-              allowFullScreen
-              title="Contact form"
-            />
+            
+            {/* Full viewport iframe container with transparent background */}
+            <div className="w-full h-full relative overflow-hidden bg-transparent flex items-center justify-center">
+              <iframe
+                src="https://forms.visme.co/fv/p9nm70vw-q007qvd"
+                width="100%"
+                height="100%"
+                style={{ border: "none", display: "block", background: "transparent" }}
+                allowFullScreen
+                title="Contact form"
+              />
+            </div>
           </div>
         </div>
       )}

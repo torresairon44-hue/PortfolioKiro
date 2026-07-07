@@ -9,10 +9,10 @@ export const siteConfig = {
   location: "Manila, Philippines",
   copyright: "© 2026 Ronald Airon S. Torres",
   socials: {
-    linkedin: "https://linkedin.com/in/airontorres",
+    linkedin: "https://www.linkedin.com/in/airon-torres-6639813a9?originalSubdomain=ph",
     github: "https://github.com/torresairon44-hue",
     twitter: "https://twitter.com/airontorres",
-    instagram: "https://instagram.com/airontorres",
+    instagram: "https://www.instagram.com/aiixx.jpg",
   },
 };
 
@@ -123,12 +123,36 @@ export const techStack = [
 ];
 
 export const services = [
-  "Web Development",
-  "UI/UX Design",
-  "Frontend Development",
-  "Full-stack Applications",
-  "Database Management",
-  "Responsive Design",
+  {
+    title: "Web Development",
+    subtitle: "Turning traditional workflows into modern digital solutions.",
+    description: "I began my journey mastering the core fundamentals of HTML5, CSS3, and JavaScript, but quickly realized the immense potential of modern web frameworks. Driven by the vision of transforming traditional business processes into sleek digital platforms, I expanded my technical toolkit to include React, Vite, Node.js, and Django, enabling me to build efficient, scalable web applications."
+  },
+  {
+    title: "UI/UX Design",
+    subtitle: "Where creativity meets functional, user-centric interfaces.",
+    description: "Blending a developer’s logic with a passion for creative visuals allows me to design interfaces that are both beautiful and highly intuitive. My creative approach earned me 2nd place in a campus UI/UX Design Competition, a mindset I consistently bring to life in complex interactive platforms, such as my Cinema Management System."
+  },
+  {
+    title: "Frontend Development",
+    subtitle: "Crafting rich, interactive interfaces and seamless digital experiences.",
+    description: "Frontend development is where I love to bring static ideas to life. During my internship at OpenCI, I took on the high-impact responsibility of redesigning the user interface for their AI chatbot platform. I specialize in bridging the gap between sophisticated software logic and a clean, pixel-perfect user experience."
+  },
+  {
+    title: "Full-stack Applications",
+    subtitle: "End-to-end development from database architecture to AI integration.",
+    description: "While my core passion thrives on the frontend, I possess versatile, cross-functional capabilities across the entire software stack. I have experience building backends, working with APIs, and integrating Large Language Models (LLMs). Additionally, I incorporate Quality Assurance (QA) and security best practices to ensure applications are reliable and secure."
+  },
+  {
+    title: "Database Management",
+    subtitle: "Managing data environments with modern, flexible architectures.",
+    description: "A robust application requires a solid data foundation. I have practical experience working across a variety of relational database systems and environments—including MySQL, SQLite, and pgAdmin4—while managing workflows via Docker. I also leverage modern backend-as-a-service platforms like Supabase to build rapid, efficient, and convenient data architectures."
+  },
+  {
+    title: "Responsive Design",
+    subtitle: "Creating fluid, highly engaging, and interactive web experiences.",
+    description: "Responsive design is more than just making a website fit a mobile screen; it’s about crafting an immersive experience. I am actively diving deep into advanced motion and layout techniques, exploring interactive trends like scroll reveals and scroll hijacking. My goal is to master modern CSS and animation principles to build websites that feel alive on any device."
+  }
 ];
 
 export interface Project {
