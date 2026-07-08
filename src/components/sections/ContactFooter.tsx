@@ -298,13 +298,28 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
             <X className="w-5 h-5" />
           </button>
 
+          {/* Privacy notice */}
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[200] bg-neutral-black/90 border border-neutral-dark-gray/50 rounded-xl px-4 py-2.5 text-center max-w-sm w-[90%]">
+            <p className="font-body text-[11px] text-neutral-dark-gray leading-snug">
+              This form is hosted by{" "}
+              <a
+                href="https://www.visme.co/privacy-policy/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neutral-offwhite underline underline-offset-2 hover:text-accent-red transition-colors"
+              >
+                Visme
+              </a>
+              . Submissions are processed on their servers under their privacy policy.
+            </p>
+          </div>
+
           <div className="animate-slide-up w-full h-full" onClick={() => setModalOpen(false)}>
             <iframe
               src="https://forms.visme.co/fv/p9nm70vw-q007qvd"
               width="100%"
               height="100%"
               style={{ border: "none", display: "block" }}
-              allowFullScreen
               title="Contact form"
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
             />

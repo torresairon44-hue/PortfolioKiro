@@ -4,8 +4,9 @@ export const siteConfig = {
   logo: "AIRON TORRES",
   subtitle: "Software & Web Developer",
   discipline: "FULL-STACK DEVELOPMENT",
-  email: "torresairon44@gmail.com",
-  phone: "+63 930 009 2838",
+  // Split to prevent bot scraping — reassembled at runtime in components
+  email: ["torresairon44", "gmail.com"].join("@"),
+  phone: ["+63", "930", "009", "2838"].join(" "),
   location: "Manila, Philippines",
   copyright: "© 2026 Ronald Airon S. Torres",
   socials: {

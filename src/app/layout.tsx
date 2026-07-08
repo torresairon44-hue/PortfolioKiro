@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { bebasNeue, manrope, inter } from "@/styles/fonts";
+import DisableInspect from "@/components/ui/DisableInspect";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
       className={`dark ${bebasNeue.variable} ${manrope.variable} ${inter.variable}`}
     >
       <body className="min-h-screen bg-neutral-black text-neutral-white font-body antialiased">
+        <DisableInspect />
         {children}
       </body>
     </html>
