@@ -58,28 +58,22 @@ html {
   [style*="height:350vh"],
   [style*="height: 220vh"],
   [style*="height:220vh"],
-  [style*="height: 200vh"],
-  [style*="height:200vh"],
   [style*="height: 300vh"],
   [style*="height:300vh"],
   [style*="height: 1000vh"],
-  [style*="height:1000vh"],
-  [style*="height: 500vh"],
-  [style*="height:500vh"] {
+  [style*="height:1000vh"] {
     height: auto !important;
   }
 
-  /* Force all scroll-animated elements visible */
-  .will-change-\[transform\,opacity\] {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  /* EXCEPTION: Preserve zoom-parallax container heights on mobile */
+  .zoom-parallax-container {
+    height: auto !important; /* Will be overridden by component inline style */
   }
 
-  /* Hero section top padding to clear fixed nav */
-  #main-content > div:nth-child(2) section {
-    padding-top: 5rem !important;
-  }
+  /* Scroll-animated elements are handled per-component on mobile.
+     Do NOT force opacity here — it fights scroll-driven JS. */
+
+  /* Hero section top padding is handled by the component itself (pt-20). */
 }
 
 body {
@@ -128,3 +122,42 @@ body {
 .animate-slide-up {
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.hero-fade-up {
+  animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-fade-up-delay {
+  animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
+  opacity: 0;
+}
+
+/* About section mobile card stagger animations */
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0px)  scale(1);    }
+}
+
+.about-card-in-0 { animation: cardFadeIn 0.55s cubic-bezier(0.16,1,0.3,1) 0ms    forwards; opacity: 0; }
+.about-card-in-1 { animation: cardFadeIn 0.55s cubic-bezier(0.16,1,0.3,1) 100ms  forwards; opacity: 0; }
+.about-card-in-2 { animation: cardFadeIn 0.55s cubic-bezier(0.16,1,0.3,1) 200ms  forwards; opacity: 0; }
+.about-card-in-3 { animation: cardFadeIn 0.55s cubic-bezier(0.16,1,0.3,1) 300ms  forwards; opacity: 0; }
+
+@keyframes timelineFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0px);  }
+}
+
+.about-timeline-in { animation: timelineFadeIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; }
+

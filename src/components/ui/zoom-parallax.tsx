@@ -1,16 +1,16 @@
 'use client';
 
 import { useScroll, useTransform, motion, useMotionValueEvent, MotionValue } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 interface Image {
   src: string;
+  mobileSrc?: string;
   alt?: string;
   isVideo?: boolean;
 }
 
 interface ZoomParallaxProps {
-  /** Array of images to be displayed in the parallax effect — max 7 images */
   images: Image[];
 }
 
@@ -26,18 +26,10 @@ function ScrollVideo({ src, scrollYProgress }: ScrollVideoProps) {
   useMotionValueEvent(scrollYProgress, "change", () => {
     const video = videoRef.current;
     if (video) {
-      if (video.paused) {
-        video.play().catch(() => {});
-      }
-
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
+      if (video.paused) video.play().catch(() => {});
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
-        if (videoRef.current && !videoRef.current.paused) {
-          videoRef.current.pause();
-        }
+        if (videoRef.current && !videoRef.current.paused) videoRef.current.pause();
       }, 150);
     }
   });
@@ -57,11 +49,21 @@ function ScrollVideo({ src, scrollYProgress }: ScrollVideoProps) {
 
 export function ZoomParallax({ images }: ZoomParallaxProps) {
   const container = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ['start start', 'end end'],
   });
 
+  // Desktop: original scales unchanged
   const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
   const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
   const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
@@ -70,11 +72,17 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
 
   const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
 
+  // Mobile gets more scroll room so zoom completes fully
+  const containerHeight = isMobile ? '250vh' : '300vh';
+
   return (
-    <div ref={container} className="relative h-[300vh]">
-      <div className="sticky top-0 h-screen overflow-hidden">
-        {images.map(({ src, alt, isVideo }, index) => {
+    <div ref={container} style={{ position: 'relative', height: containerHeight }}>
+      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', zIndex: 10 }}>
+        {images.map(({ src, mobileSrc, alt, isVideo }, index) => {
           const scale = scales[index % scales.length];
+          // Use portrait image on mobile if available
+          const activeSrc = (isMobile && !isVideo && mobileSrc) ? mobileSrc : src;
+
           return (
             <motion.div
               key={index}
@@ -90,10 +98,10 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
             >
               <div className="relative h-[25vh] w-[25vw]">
                 {isVideo ? (
-                  <ScrollVideo src={src} scrollYProgress={scrollYProgress} />
+                  <ScrollVideo src={activeSrc} scrollYProgress={scrollYProgress} />
                 ) : (
                   <img
-                    src={src || '/placeholder.svg'}
+                    src={activeSrc || '/placeholder.svg'}
                     alt={alt || `Parallax image ${index + 1}`}
                     className="h-full w-full object-cover"
                   />

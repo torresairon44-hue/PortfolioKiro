@@ -30,6 +30,10 @@ const CertificatesSection = ({ className }: CertificatesSectionProps) => {
   const [paused, setPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const count = CERTS.length;
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
 
   // Mouse parallax on the glow
   const mouseX = useMotionValue(0);
@@ -69,6 +73,45 @@ const CertificatesSection = ({ className }: CertificatesSectionProps) => {
     return () => window.removeEventListener("keydown", onKey);
   }, [next, prev]);
 
+  // ── Entrance animation via IntersectionObserver ───────────────────
+  useEffect(() => {
+    const elements = [
+      { el: headerRef.current,   delay: 0   },
+      { el: carouselRef.current, delay: 150 },
+      { el: controlsRef.current, delay: 280 },
+    ];
+
+    const show = (el: HTMLElement, delay: number) => {
+      el.style.transition = `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}ms`;
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0px)";
+    };
+    const hide = (el: HTMLElement) => {
+      el.style.transition = "none";
+      el.style.opacity = "0";
+      el.style.transform = "translateY(28px)";
+    };
+
+    // Set initial hidden state
+    elements.forEach(({ el }) => { if (el) hide(el); });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            elements.forEach(({ el, delay }) => { if (el) show(el, delay); });
+          } else {
+            elements.forEach(({ el }) => { if (el) hide(el); });
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   // Card position/style based on offset from active
   const getCardStyle = (index: number) => {
     const offset = ((index - active + count) % count + count) % count;
@@ -94,6 +137,7 @@ const CertificatesSection = ({ className }: CertificatesSectionProps) => {
   return (
     <>
       <section
+        ref={sectionRef}
         aria-label="Certifications and Awards"
         className={cn(
           "relative w-full bg-[#0A0A0A] overflow-hidden flex flex-col items-center justify-center",
@@ -132,7 +176,7 @@ const CertificatesSection = ({ className }: CertificatesSectionProps) => {
         />
 
         {/* Section header */}
-        <div className="relative z-20 text-center mb-12 px-4">
+        <div ref={headerRef} className="relative z-20 text-center mb-12 px-4">
           <span className="font-body font-semibold text-[11px] uppercase tracking-[3px] text-neutral-dark-gray block mb-3">
             Certifications &amp; Awards
           </span>
@@ -146,6 +190,7 @@ const CertificatesSection = ({ className }: CertificatesSectionProps) => {
 
         {/* 3D Floating Carousel */}
         <div
+          ref={carouselRef}
           className="relative z-10 flex items-center justify-center"
           style={{
             width: "100%",
@@ -248,7 +293,7 @@ const CertificatesSection = ({ className }: CertificatesSectionProps) => {
         </div>
 
         {/* Prev / Next arrows */}
-        <div className="relative z-20 flex items-center gap-6 mt-10">
+        <div ref={controlsRef} className="relative z-20 flex items-center gap-6 mt-10">
           <button
             onClick={prev}
             className="w-10 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white flex items-center justify-center transition-all duration-200"

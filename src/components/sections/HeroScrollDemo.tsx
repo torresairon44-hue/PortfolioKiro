@@ -10,7 +10,7 @@ const roles = [
   "Junior Programmer",
   "UI/UX Designer",
   "AI Engineer",
-  "Backend Developer"
+  "Backend Developer",
 ];
 
 const HeroScrollDemo = () => {
@@ -18,16 +18,23 @@ const HeroScrollDemo = () => {
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(80);
-  const [isMobile, setIsMobile] = useState(false);
 
-  // Detect mobile — same breakpoint ContainerScroll uses (≤768px)
+  // ── Mobile detection ─────────────────────────────────────────────
+  // Default to true on mobile-first: avoids ContainerScroll rendering
+  // on first paint then swapping — prevents the globals.css sticky
+  // override from collapsing ContainerScroll and hiding the title.
+  const [isMobile, setIsMobile] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
     check();
-    window.addEventListener("resize", check);
+    setMounted(true);
+    window.addEventListener("resize", check, { passive: true });
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // ── Typing animation ─────────────────────────────────────────────
   useEffect(() => {
     const fullWord = roles[currentRoleIndex];
 
@@ -58,6 +65,7 @@ const HeroScrollDemo = () => {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, currentRoleIndex, typingSpeed]);
 
+  // ── Title text (shared between mobile + desktop) ─────────────────
   const titleComponent = (
     <div className="flex flex-col items-center gap-3 md:gap-4 mb-8 md:mb-16">
       <p className="text-sm md:text-lg font-body font-medium text-neutral-offwhite uppercase tracking-widest">
@@ -65,7 +73,10 @@ const HeroScrollDemo = () => {
       </p>
       <h1 className="font-display text-4xl md:text-7xl lg:text-[6rem] leading-none text-neutral-white min-h-[1.2em] flex items-center justify-center">
         <span>{currentText}</span>
-        <span className="w-[3px] md:w-[4px] h-[0.8em] bg-current ml-1 animate-pulse" aria-hidden="true" />
+        <span
+          className="w-[3px] md:w-[4px] h-[0.8em] bg-current ml-1 animate-pulse"
+          aria-hidden="true"
+        />
       </h1>
       <p className="text-base md:text-xl text-neutral-offwhite font-body font-light italic">
         Scroll to explore
@@ -73,18 +84,24 @@ const HeroScrollDemo = () => {
     </div>
   );
 
+  // ── Before mount: render mobile layout unconditionally to avoid
+  //    SSR/hydration mismatch causing blank content on mobile ───────
+  const showMobile = !mounted || isMobile;
+
   return (
     <section
       className="flex flex-col overflow-hidden bg-[#0B0B0C] bg-[linear-gradient(to_right,#1f29371a_1px,transparent_1px),linear-gradient(to_bottom,#1f29371a_1px,transparent_1px)] bg-[size:4rem_4rem]"
       aria-label="Portfolio preview"
     >
-      {isMobile ? (
+      {showMobile ? (
         /* ── Mobile: flat layout, no tilt, no scroll-driven 3D ── */
-        <div className="flex flex-col items-center px-4 py-10 gap-6">
+        <div className="flex flex-col items-center px-4 pt-20 pb-10 gap-6">
           {titleComponent}
-          {/* IDE sits in a plain rounded card, no perspective/rotateX */}
-          <div className="w-full rounded-2xl border-2 border-[#2e2b26] overflow-hidden shadow-2xl"
-               style={{ height: "min(520px, 75vh)" }}>
+          {/* IDE in a plain rounded card — no perspective / rotateX */}
+          <div
+            className="w-full rounded-2xl border-2 border-[#2e2b26] overflow-hidden shadow-2xl"
+            style={{ height: "min(480px, 70vh)" }}
+          >
             <IDEWindow className="h-full" />
           </div>
         </div>
@@ -99,4 +116,3 @@ const HeroScrollDemo = () => {
 };
 
 export default HeroScrollDemo;
-

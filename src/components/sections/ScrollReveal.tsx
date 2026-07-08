@@ -71,7 +71,11 @@ const ScrollReveal = ({
               "opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)";
             el.style.opacity = "1";
             el.style.transform = "translate3d(0, 0, 0)";
-            observer.disconnect();
+          } else {
+            // Reset so it re-animates when scrolled back into view
+            el.style.transition = "none";
+            el.style.opacity = "0";
+            el.style.transform = getTransform(0);
           }
         });
       },
@@ -80,7 +84,7 @@ const ScrollReveal = ({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [getTransform]);
 
   useEffect(() => {
     // On mobile always use fade/intersection — never sticky pinning
