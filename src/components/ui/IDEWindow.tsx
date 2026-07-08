@@ -337,7 +337,10 @@ const MemCardTile = ({ card, onFlip }: { card: MemCard; onFlip: (uid: string) =>
                          : "border-[#2e2b26] bg-[#131210]"}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
         >
-          <Icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color }} />
+          {/* Wrap in span so color is inherited — react-icons doesn't accept style prop */}
+          <span style={{ color }}>
+            <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+          </span>
           <span className="text-[7px] sm:text-[9px] font-mono text-[#7a7268]
                            leading-none text-center px-0.5 line-clamp-1">
             {label}
