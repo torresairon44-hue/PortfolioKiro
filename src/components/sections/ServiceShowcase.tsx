@@ -13,6 +13,14 @@ const ServiceShowcase = ({ className }: ServiceShowcaseProps) => {
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number>(0);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const updateStyles = useCallback(() => {
     if (!containerRef.current) return;
@@ -46,6 +54,12 @@ const ServiceShowcase = ({ className }: ServiceShowcaseProps) => {
   }, []);
 
   useEffect(() => {
+    if (isMobile) {
+      itemRefs.current.forEach((el) => {
+        if (el) { el.style.opacity = "1"; el.style.transform = "none"; }
+      });
+      return;
+    }
     const handleScroll = () => {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(updateStyles);
@@ -58,12 +72,44 @@ const ServiceShowcase = ({ className }: ServiceShowcaseProps) => {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [updateStyles]);
+  }, [isMobile, updateStyles]);
+
+  // Mobile: plain scrollable layout
+  if (isMobile) {
+    return (
+      <div className={cn("bg-[radial-gradient(circle_at_center,#1A160E_0%,#0A0A0A_70%)] px-6 py-16", className)}>
+        <section id="about" aria-labelledby="services-heading">
+          <span className="font-body font-medium text-[14px] uppercase tracking-[2px] text-accent-gold block mb-2">What I Do</span>
+          <h2 id="services-heading" className="font-display text-[40px] leading-none text-neutral-white mb-8">Services &amp;<br />Expertise</h2>
+          <div className="flex flex-col">
+            {services.map((service, index) => (
+              <div
+                key={service.title}
+                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                className="flex flex-col py-4 border-b border-neutral-dark-gray/40 cursor-pointer"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className={cn("font-body font-bold text-[15px]", expandedIndex === index ? "text-accent-gold" : "text-neutral-white")}>
+                    {service.title}
+                  </span>
+                  <button type="button" className={cn("w-6 h-6 rounded-full border border-neutral-dark-gray/40 flex items-center justify-center text-[10px]", expandedIndex === index ? "bg-accent-gold border-accent-gold rotate-90 text-neutral-black" : "text-neutral-offwhite")} aria-expanded={expandedIndex === index}>➤</button>
+                </div>
+                <div className={cn("grid transition-all duration-300 ease-in-out overflow-hidden", expandedIndex === index ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0")}>
+                  <div className="overflow-hidden flex flex-col gap-2">
+                    <p className="font-body font-semibold text-[11px] text-accent-red leading-relaxed">{service.subtitle}</p>
+                    <p className="font-body text-[11px] text-neutral-offwhite/80 leading-relaxed">{service.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
-    <div ref={containerRef} className={cn("relative h-[750vh] bg-[radial-gradient(circle_at_center,#1A160E_0%,#0A0A0A_70%)]", className)}>
-      {/* Subtle top fade transition from Globe light gray background #E2E8F0 to dark bronze */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#E2E8F0] to-transparent pointer-events-none z-10" />
+    <div ref={containerRef} className={cn("relative h-[400vh] md:h-[750vh] bg-[radial-gradient(circle_at_center,#1A160E_0%,#0A0A0A_70%)]", className)}>
       <section
         id="about"
         className="sticky top-0 min-h-screen py-16 md:py-24 flex items-center overflow-hidden px-6 md:px-12 lg:px-[108px]"

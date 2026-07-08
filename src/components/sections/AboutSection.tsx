@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
-import Image from "next/image";
 import { cn } from "@/lib/cn";
-import { stats, timeline, certificates } from "@/lib/constants";
+import { stats, timeline } from "@/lib/constants";
 import { ZoomParallax } from "@/components/ui/zoom-parallax";
 
 interface AboutSectionProps {
@@ -43,20 +42,19 @@ const PARALLAX_IMAGES = [
 ];
 
 const AboutSection = ({ className }: AboutSectionProps) => {
-  // ── CounterGrid refs ──────────────────────────────────────────────
   const counterContainerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const numberRefs = useRef<(HTMLElement | null)[]>([]);
   const journeyRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  // ── Certificates refs ─────────────────────────────────────────────
-  const certContainerRef = useRef<HTMLDivElement>(null);
-  const certCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const certInfoRef = useRef<HTMLDivElement>(null);
-  const [activeCertIndex, setActiveCertIndex] = useState(0);
-  const [certScrollProgress, setCertScrollProgress] = useState(0);
-
   const rafRef = useRef<number>(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // ── CounterGrid + journey scroll handler ─────────────────────────
   const updateCounter = useCallback(() => {
@@ -118,80 +116,18 @@ const AboutSection = ({ className }: AboutSectionProps) => {
     });
   }, []);
 
-  // ── Certificates scroll handler ───────────────────────────────────
-  const updateCert = useCallback(() => {
-    if (!certContainerRef.current) return;
-    const rect = certContainerRef.current.getBoundingClientRect();
-    const containerHeight = certContainerRef.current.offsetHeight;
-    const viewportHeight = window.innerHeight;
-    const scrollableDistance = containerHeight - viewportHeight;
-    const scrolled = -rect.top;
-    const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
-
-    setCertScrollProgress(progress);
-
-    const totalCards = certificates.length;
-    const rawIndex = progress * totalCards;
-    const newIndex = Math.min(Math.floor(rawIndex), totalCards - 1);
-    setActiveCertIndex(newIndex);
-
-    // Animate each card in the stack
-    certCardRefs.current.forEach((el, index) => {
-      if (!el) return;
-
-      const cardStart = index / totalCards;
-      const cardEnd = (index + 1) / totalCards;
-      const cardProgress = Math.min(Math.max((progress - cardStart) / (cardEnd - cardStart), 0), 1);
-
-      if (index < newIndex) {
-        // Already-seen cards: fly off upward and away
-        el.style.opacity = "0";
-        el.style.transform = `translate3d(0, -80px, 0) scale(0.85) rotate(-4deg)`;
-        el.style.zIndex = `${index}`;
-      } else if (index === newIndex) {
-        // Active card: smooth entrance from bottom-right with tilt
-        const easeIn = 1 - Math.pow(1 - cardProgress, 3);
-        const entryX = (1 - easeIn) * 60;
-        const entryY = (1 - easeIn) * 40;
-        const entryRotate = (1 - easeIn) * 8;
-        const entryScale = 0.82 + easeIn * 0.18;
-        el.style.opacity = `${easeIn}`;
-        el.style.transform = `translate3d(${entryX}px, ${entryY}px, 0) scale(${entryScale}) rotate(${entryRotate}deg)`;
-        el.style.zIndex = `${totalCards + 10}`;
-        el.style.boxShadow = "0 32px 80px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06)";
-      } else {
-        // Future cards: stacked behind with offset and tilt
-        const offset = index - newIndex;
-        el.style.opacity = `${Math.max(0, 1 - offset * 0.25)}`;
-        el.style.transform = `translate3d(${offset * 10}px, ${offset * 8}px, 0) scale(${1 - offset * 0.04}) rotate(${offset * 2}deg)`;
-        el.style.zIndex = `${totalCards - offset}`;
-        el.style.boxShadow = "";
-      }
-    });
-
-    // Animate info panel
-    if (certInfoRef.current) {
-      certInfoRef.current.style.opacity = progress > 0.02 ? "1" : "0";
-      certInfoRef.current.style.transform = progress > 0.02 ? "translate3d(0,0,0)" : "translate3d(-20px,0,0)";
-    }
-  }, []);
-
   useEffect(() => {
     const handleScroll = () => {
       cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(() => {
-        updateCounter();
-        updateCert();
-      });
+      rafRef.current = requestAnimationFrame(updateCounter);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     updateCounter();
-    updateCert();
     return () => {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [updateCounter, updateCert]);
+  }, [updateCounter]);
 
   const cardStyles = [
     "col-span-2 md:col-span-1 md:row-span-2 rounded-3xl",
@@ -206,9 +142,6 @@ const AboutSection = ({ className }: AboutSectionProps) => {
     "bg-gradient-to-tl from-black/8 to-accent-gold/5 border-accent-gold/20 shadow-[0_4px_24px_rgba(0,0,0,0.04)]",
   ];
 
-  const currentCert = certificates[activeCertIndex];
-  const overallProgress = Math.round(certScrollProgress * 100);
-
   return (
     <section aria-label="About" className={cn("", className)}>
 
@@ -218,7 +151,7 @@ const AboutSection = ({ className }: AboutSectionProps) => {
           <span className="font-display text-[11px] tracking-[4px] text-neutral-dark-gray uppercase">
             Section
           </span>
-          <h2 className="font-display text-[56px] md:text-[80px] leading-none text-neutral-white">
+          <h2 className="font-display text-[44px] md:text-[80px] leading-none text-neutral-white">
             About
           </h2>
           <p className="font-body text-[15px] text-neutral-offwhite max-w-[420px] text-center leading-relaxed">
@@ -228,12 +161,12 @@ const AboutSection = ({ className }: AboutSectionProps) => {
         <ZoomParallax images={PARALLAX_IMAGES} />
       </div>
 
-      <div className="bg-gradient-to-br from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0] text-[#0A0A0A] relative">
+      <div className="bg-gradient-to-b from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0] text-[#0A0A0A] relative">
         {/* Subtle top fade transition from Hero background #0D0D0E to light gray */}
         <div className="absolute top-0 left-0 right-0 h-[80vh] bg-gradient-to-b from-[#0D0D0E] to-transparent pointer-events-none z-10" />
 
         {/* ── Stats + Journey ── */}
-        <div ref={counterContainerRef} className="relative h-[350vh]">
+        <div ref={counterContainerRef} className="relative h-[200vh] md:h-[350vh]">
           <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 lg:px-[108px] gap-8">
 
             {/* Stat cards */}
@@ -298,132 +231,6 @@ const AboutSection = ({ className }: AboutSectionProps) => {
                     {item.description}
                   </p>
                 </div>
-              ))}
-            </div>
-
-          </div>
-        </div>
-
-        {/* ── Certificates & Awards ── */}
-        <div ref={certContainerRef} className="relative h-[700vh]">
-          <div className="sticky top-0 h-screen flex items-center overflow-hidden px-6 md:px-12 lg:px-[108px]">
-
-            {/* ── Left Info Panel ── */}
-            <div
-              ref={certInfoRef}
-              className="hidden lg:flex flex-col gap-6 w-[320px] shrink-0 transition-all duration-700"
-              style={{ opacity: 0, transform: "translate3d(-20px,0,0)" }}
-            >
-              {/* Label */}
-              <span className="font-body font-semibold text-[11px] uppercase tracking-[3px] text-zinc-400">
-                Certifications & Awards
-              </span>
-
-              {/* Title */}
-              <div className="flex flex-col gap-1">
-                <h3 className="font-display text-[36px] leading-none text-[#0A0A0A]">
-                  {currentCert.title}
-                </h3>
-                <p className="font-body text-[14px] text-zinc-500">{currentCert.issuer} · {currentCert.year}</p>
-              </div>
-
-              {/* Type badge */}
-              <span className={cn(
-                "self-start px-3 py-1 rounded-full text-[11px] font-body font-bold uppercase tracking-[2px]",
-                currentCert.type === "Award"
-                  ? "bg-accent-gold/15 text-[#8A6623] border border-accent-gold/30"
-                  : "bg-accent-red/10 text-accent-red border border-accent-red/20"
-              )}>
-                {currentCert.type}
-              </span>
-
-              {/* Progress bar */}
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <span className="font-body text-[11px] text-zinc-400 uppercase tracking-[1px]">Progress</span>
-                  <span className="font-body font-bold text-[12px] text-[#0A0A0A]">{activeCertIndex + 1} / {certificates.length}</span>
-                </div>
-                <div className="h-[3px] w-full bg-zinc-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-accent-red to-accent-gold rounded-full transition-all duration-300"
-                    style={{ width: `${overallProgress}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Dot nav */}
-              <div className="flex gap-2">
-                {certificates.map((cert, index) => (
-                  <div
-                    key={index}
-                    title={cert.title}
-                    className={cn(
-                      "h-1.5 rounded-full transition-all duration-500",
-                      index === activeCertIndex
-                        ? "w-8 bg-accent-red"
-                        : index < activeCertIndex
-                          ? "w-3 bg-accent-red/30"
-                          : "w-3 bg-zinc-300"
-                    )}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* ── Right — Stacked Card Deck ── */}
-            <div className="flex-1 flex items-center justify-center lg:justify-end relative h-full">
-              <div className="relative w-full max-w-[520px] aspect-[4/3]" style={{ perspective: "1200px" }}>
-                {certificates.map((cert, index) => (
-                  <div
-                    key={cert.title}
-                    ref={(el) => { certCardRefs.current[index] = el; }}
-                    className="absolute inset-0 rounded-2xl overflow-hidden border border-black/8 will-change-[transform,opacity]"
-                    style={{
-                      opacity: 0,
-                      transform: `translate3d(${(index) * 10}px, ${(index) * 8}px, 0) scale(${1 - index * 0.04}) rotate(${index * 2}deg)`,
-                      transition: "box-shadow 0.4s ease",
-                      zIndex: certificates.length - index,
-                    }}
-                  >
-                    <Image
-                      src={cert.imageSrc}
-                      alt={cert.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 520px"
-                      priority={index === 0}
-                    />
-                    {/* Bottom overlay with title */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between">
-                      <div>
-                        <p className="font-body font-bold text-[13px] text-white/90">{cert.title}</p>
-                        <p className="font-body text-[11px] text-white/55">{cert.issuer} · {cert.year}</p>
-                      </div>
-                      <span className={cn(
-                        "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[1.5px]",
-                        cert.type === "Award"
-                          ? "bg-accent-gold/90 text-black"
-                          : "bg-accent-red/90 text-white"
-                      )}>
-                        {cert.type}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Mobile: dot progress (bottom center) */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 lg:hidden">
-              {certificates.map((_, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    "h-1.5 rounded-full transition-all duration-500",
-                    index === activeCertIndex ? "w-8 bg-accent-red" : "w-3 bg-zinc-300"
-                  )}
-                />
               ))}
             </div>
 

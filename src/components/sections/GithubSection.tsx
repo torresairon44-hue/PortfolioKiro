@@ -28,17 +28,19 @@ const GithubSection = ({ className }: GithubSectionProps) => {
         </p>
       </div>
 
-      <div className="w-full max-w-[1100px] rounded-[24px] border border-[#30363d] bg-[#161b22] px-4 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.28)] md:px-6 md:py-6">
-        <GithubCalendar
-          username={githubUsername}
-          cellSize={13}
-          cellGap={3}
-          cellShape="rounded"
-          showMonthLabels
-          showStats
-          showLegend
-          className="w-full"
-        />
+      <div className="w-full max-w-[1100px] rounded-[24px] border border-[#30363d] bg-[#161b22] px-4 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.28)] md:px-6 md:py-6 overflow-x-auto">
+        <div className="min-w-[340px]">
+          <GithubCalendar
+            username={githubUsername}
+            cellSize={13}
+            cellGap={3}
+            cellShape="rounded"
+            showMonthLabels
+            showStats
+            showLegend
+            className="w-full"
+          />
+        </div>
       </div>
     </section>
   );

@@ -8,17 +8,17 @@ import {
   GlobeDemo,
   ServiceShowcase,
   PortfolioGrid,
+  CertificatesSection,
+  GithubSection,
   ContactFooter,
   ScrollReveal,
   HeroScrollDemo,
-  GithubSection,
 } from "@/components/sections";
 import LoadingScreen from "@/components/sections/LoadingScreen";
 
 function MainContent() {
   const [visible, setVisible] = useState(false)
 
-  // Trigger fade-in on next frame so the transition actually plays
   useEffect(() => {
     const raf = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(raf)
@@ -34,18 +34,19 @@ function MainContent() {
         <HeroScrollDemo />
         <Hero />
         <AboutSection />
-        <ScrollReveal height="150vh" direction="up" className="bg-gradient-to-b from-[#E2E8F0] via-[#F1F5F9] to-[#F8FAFC]">
-          <GlobeDemo />
-        </ScrollReveal>
+        <GlobeDemo />
         <ServiceShowcase />
         <PortfolioGrid />
-        <ScrollReveal height="200vh" direction="up" className="bg-gradient-to-b from-[#0A0A0A] to-[#140406]">
-          <GithubSection className="bg-transparent" />
+        <ScrollReveal height="200vh" direction="up" className="bg-[#0A0A0A]">
+          <CertificatesSection className="bg-transparent" />
+        </ScrollReveal>
+        <ScrollReveal height="200vh" direction="up" className="bg-[#0A0A0A]">
+          <GithubSection className="bg-gradient-to-b from-[#0A0A0A] to-[#0A0A0A]" />
+        </ScrollReveal>
+        <ScrollReveal height="200vh" direction="up" className="bg-[#0A0A0A]" tall>
+          <ContactFooter className="bg-gradient-to-b from-[#0A0A0A] via-[#140406] to-[#2B090C]" />
         </ScrollReveal>
       </main>
-      <ScrollReveal height="320vh" direction="up" className="bg-gradient-to-b from-[#140406] via-[#1C0507] to-[#2B090C]">
-        <ContactFooter className="bg-transparent" />
-      </ScrollReveal>
     </div>
   )
 }

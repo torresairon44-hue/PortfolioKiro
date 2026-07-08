@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { siteConfig, navLinks, services } from "@/lib/constants";
@@ -69,7 +70,7 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
 
         {/* ─── CONTACT HERO ─── */}
         <div className="relative">
-          <div className="px-6 md:px-12 lg:px-[108px] pt-20 pb-16 lg:pt-24 lg:pb-20">
+          <div className="px-6 md:px-12 lg:px-[108px] pt-20 md:pt-28 pb-16 lg:pt-36 lg:pb-20">
             {/* Label */}
             <p className="font-body font-medium text-[13px] uppercase tracking-[3px] text-accent-red mb-5">
               Get In Touch
@@ -151,7 +152,7 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
           </div>
 
           {/* ─── FOOTER BODY ─── */}
-          <div className="px-6 md:px-12 lg:px-[108px] py-12">
+          <div className="px-6 md:px-12 lg:px-[108px] py-16">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {/* Col 1 — Brand */}
               <div className="flex flex-col gap-5">
@@ -279,53 +280,37 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
         </div>
       </section>
 
-      {/* ─── Visme Form Modal ─── */}
-      {modalOpen && (
+      {/* ─── Visme Form Modal — rendered via portal to escape sticky/transform context ─── */}
+      {modalOpen && createPortal(
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-sm"
-          onClick={() => setModalOpen(false)}
+          className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-label="Contact form"
         >
-          {/* Animation style declaration inside modal wrapper */}
-          <style>{`
-            @keyframes slideUp {
-              0% { opacity: 0; transform: translateY(30px); }
-              100% { opacity: 1; transform: translateY(0); }
-            }
-            .animate-slide-up {
-              animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            }
-          `}</style>
-
-          <div
-            className="animate-slide-up relative w-screen h-screen flex flex-col justify-center items-center overflow-hidden bg-transparent"
-            onClick={(e) => e.stopPropagation()}
+          {/* Close Button */}
+          <button
+            type="button"
+            onClick={() => setModalOpen(false)}
+            className="fixed top-4 right-4 z-[200] size-11 flex items-center justify-center rounded-full bg-black text-white border border-white/30 hover:bg-white hover:text-black transition-all duration-200"
+            aria-label="Close contact form"
           >
-            {/* Close Button positioned top-right of the screen */}
-            <button
-              type="button"
-              onClick={() => setModalOpen(false)}
-              className="absolute top-6 right-6 z-20 size-11 flex items-center justify-center rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-md hover:bg-white hover:text-black hover:border-white transition-all duration-200"
-              aria-label="Close contact form"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            {/* Full viewport iframe container with transparent background */}
-            <div className="w-full h-full relative overflow-hidden bg-transparent flex items-center justify-center">
-              <iframe
-                src="https://forms.visme.co/fv/p9nm70vw-q007qvd"
-                width="100%"
-                height="100%"
-                style={{ border: "none", display: "block", background: "transparent" }}
-                allowFullScreen
-                title="Contact form"
-              />
-            </div>
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="animate-slide-up w-full h-full" onClick={() => setModalOpen(false)}>
+            <iframe
+              src="https://forms.visme.co/fv/p9nm70vw-q007qvd"
+              width="100%"
+              height="100%"
+              style={{ border: "none", display: "block" }}
+              allowFullScreen
+              title="Contact form"
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

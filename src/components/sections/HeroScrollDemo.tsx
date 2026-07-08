@@ -53,20 +53,20 @@ const HeroScrollDemo = () => {
 
   return (
     <section
-      className="flex flex-col overflow-hidden min-h-screen bg-[#0B0B0C] bg-[linear-gradient(to_right,#1f29371a_1px,transparent_1px),linear-gradient(to_bottom,#1f29371a_1px,transparent_1px)] bg-[size:4rem_4rem]"
+      className="flex flex-col overflow-hidden bg-[#0B0B0C] bg-[linear-gradient(to_right,#1f29371a_1px,transparent_1px),linear-gradient(to_bottom,#1f29371a_1px,transparent_1px)] bg-[size:4rem_4rem]"
       aria-label="Portfolio preview"
     >
       <ContainerScroll
         titleComponent={
-          <div className="flex flex-col items-center gap-4 mb-50">
-            <p className="text-base md:text-lg font-body font-medium text-neutral-offwhite uppercase tracking-widest">
+          <div className="flex flex-col items-center gap-3 md:gap-4 mb-8 md:mb-16">
+            <p className="text-sm md:text-lg font-body font-medium text-neutral-offwhite uppercase tracking-widest">
               Airon Torres — Portfolio
             </p>
-            <h1 className="font-display text-5xl md:text-7xl lg:text-[6rem] leading-none text-neutral-white min-h-[1.2em] flex items-center justify-center">
+            <h1 className="font-display text-4xl md:text-7xl lg:text-[6rem] leading-none text-neutral-white min-h-[1.2em] flex items-center justify-center">
               <span>{currentText}</span>
-              <span className="w-[4px] h-[0.8em] bg-current ml-1 animate-pulse" aria-hidden="true" />
+              <span className="w-[3px] md:w-[4px] h-[0.8em] bg-current ml-1 animate-pulse" aria-hidden="true" />
             </h1>
-            <p className="text-lg md:text-xl text-neutral-offwhite font-body font-light italic">
+            <p className="text-base md:text-xl text-neutral-offwhite font-body font-light italic">
               Scroll to explore
             </p>
           </div>

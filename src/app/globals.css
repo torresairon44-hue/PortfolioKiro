@@ -26,9 +26,66 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Allow native momentum scroll on mobile */
+@media (min-width: 768px) {
+  html {
+    overscroll-behavior: none;
+  }
+}
+
+/* ── MOBILE: disable scroll-pin animations ──────────────────────────
+   All the scroll-driven sections use position:sticky inside a tall
+   container. On mobile this kills native scroll momentum and leaves
+   content stuck at opacity:0. Override to normal flow so content is
+   always visible and scrolls naturally.
+─────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Un-pin every sticky section */
+  .sticky {
+    position: relative !important;
+    height: auto !important;
+    top: auto !important;
+  }
+
+  /* Remove the tall scroll-distance containers */
+  [style*="height: 500vh"],
+  [style*="height:500vh"],
+  [style*="height: 750vh"],
+  [style*="height:750vh"],
+  [style*="height: 400vh"],
+  [style*="height:400vh"],
+  [style*="height: 350vh"],
+  [style*="height:350vh"],
+  [style*="height: 220vh"],
+  [style*="height:220vh"],
+  [style*="height: 200vh"],
+  [style*="height:200vh"],
+  [style*="height: 300vh"],
+  [style*="height:300vh"],
+  [style*="height: 1000vh"],
+  [style*="height:1000vh"],
+  [style*="height: 500vh"],
+  [style*="height:500vh"] {
+    height: auto !important;
+  }
+
+  /* Force all scroll-animated elements visible */
+  .will-change-\[transform\,opacity\] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Hero section top padding to clear fixed nav */
+  #main-content > div:nth-child(2) section {
+    padding-top: 5rem !important;
+  }
+}
+
 body {
   background-color: #0A0A0A;
   color: var(--color-neutral-white);
+  overflow-x: hidden;
 }
 
 /* Focus states for accessibility */
@@ -61,4 +118,13 @@ body {
 
 .animate-marquee {
   animation: marquee 30s linear infinite;
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

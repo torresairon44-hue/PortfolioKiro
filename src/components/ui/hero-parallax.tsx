@@ -38,11 +38,11 @@ export const HeroParallax = ({
   const springConfig = { stiffness: 300, damping: 30, bounce: 100 };
 
   const translateX = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, 1000]),
+    useTransform(scrollYProgress, [0, 1], [0, 500]),
     springConfig
   );
   const translateXReverse = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, -1000]),
+    useTransform(scrollYProgress, [0, 1], [0, -500]),
     springConfig
   );
   const rotateX = useSpring(
@@ -65,23 +65,23 @@ export const HeroParallax = ({
   return (
     <div
       ref={ref}
-      className="relative z-10 h-[500vh] py-40 overflow-hidden antialiased flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
+      className="relative z-10 h-[300vh] md:h-[500vh] py-20 md:py-40 overflow-hidden antialiased flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
     >
       {header}
       <motion.div
         style={{ rotateX, rotateZ, translateY, opacity }}
       >
-        <motion.div className="flex flex-row-reverse space-x-reverse space-x-20 mb-20">
+        <motion.div className="flex flex-row-reverse space-x-reverse space-x-10 md:space-x-20 mb-10 md:mb-20">
           {firstRow.map((product, i) => (
             <ProductCard product={product} translate={translateX} key={`row1-${i}`} />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row mb-20 space-x-20">
+        <motion.div className="flex flex-row mb-10 md:mb-20 space-x-10 md:space-x-20">
           {secondRow.map((product, i) => (
             <ProductCard product={product} translate={translateXReverse} key={`row2-${i}`} />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row-reverse space-x-reverse space-x-20">
+        <motion.div className="flex flex-row-reverse space-x-reverse space-x-10 md:space-x-20">
           {thirdRow.map((product, i) => (
             <ProductCard product={product} translate={translateX} key={`row3-${i}`} />
           ))}
@@ -103,13 +103,13 @@ export const ProductCard = ({
       style={{ x: translate }}
       whileHover={{ y: -20 }}
       key={product.title}
-      className="group/product h-72 w-[30rem] relative flex-shrink-0 overflow-hidden rounded-lg"
+      className="group/product h-48 w-[16rem] md:h-72 md:w-[30rem] relative flex-shrink-0 overflow-hidden rounded-lg"
     >
       <Link
         href={product.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="block w-full h-full"
+        className="relative block w-full h-full"
       >
         {/* Blurred background fill — same image, scaled up and blurred */}
         <Image
