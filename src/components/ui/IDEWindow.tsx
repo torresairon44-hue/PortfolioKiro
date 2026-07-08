@@ -259,9 +259,16 @@ const MemoryGame = ({ onBack }: { onBack: () => void }) => {
         </div>
       </div>
 
-      {/* Card grid — 3 cols on mobile, 4 on larger */}
-      <div className="flex-1 flex items-center justify-center p-3 overflow-auto">
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full max-w-xs sm:max-w-sm">
+      {/* Card grid — fills available space, cards scale to fit */}
+      <div className="flex-1 flex items-center justify-center p-2 overflow-hidden">
+        <div
+          className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2 w-full h-full"
+          style={{
+            maxWidth: "min(100%, 320px)",
+            maxHeight: "100%",
+            gridTemplateRows: "repeat(4, 1fr)",
+          }}
+        >
           {cards.map(card => (
             <MemCardTile key={card.uid} card={card} onFlip={handleFlip} />
           ))}
@@ -316,8 +323,8 @@ const MemCardTile = ({ card, onFlip }: { card: MemCard; onFlip: (uid: string) =>
   return (
     <button
       onClick={() => onFlip(card.uid)}
-      className="relative aspect-square touch-manipulation focus:outline-none
-                 focus-visible:ring-2 focus-visible:ring-[#D4B26F]"
+      className="relative touch-manipulation focus:outline-none
+                 focus-visible:ring-2 focus-visible:ring-[#D4B26F] min-h-0"
       style={{ perspective: "800px" }}
       aria-label={faceUp ? label : "Hidden card"}
       aria-pressed={faceUp}
@@ -328,20 +335,19 @@ const MemCardTile = ({ card, onFlip }: { card: MemCard; onFlip: (uid: string) =>
         className="w-full h-full relative"
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Front face — icon + label */}
+        {/* Front face */}
         <div
           className={`absolute inset-0 rounded-lg flex flex-col items-center
-                       justify-center gap-1 border transition-colors duration-300
+                       justify-center gap-0.5 border transition-colors duration-300
                        ${card.matched
                          ? "border-[#D4B26F]/50 bg-[#D4B26F]/10"
                          : "border-[#2e2b26] bg-[#131210]"}`}
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
         >
-          {/* Wrap in span so color is inherited — react-icons doesn't accept style prop */}
           <span style={{ color }}>
-            <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+            <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
           </span>
-          <span className="text-[7px] sm:text-[9px] font-mono text-[#7a7268]
+          <span className="text-[6px] sm:text-[8px] font-mono text-[#7a7268]
                            leading-none text-center px-0.5 line-clamp-1">
             {label}
           </span>
@@ -357,8 +363,7 @@ const MemCardTile = ({ card, onFlip }: { card: MemCard; onFlip: (uid: string) =>
             transform: "rotateY(180deg)",
           }}
         >
-          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded border border-[#3d3a34]
-                          bg-[#2e2b26] opacity-60" />
+          <div className="w-3 h-3 rounded border border-[#3d3a34] bg-[#2e2b26] opacity-60" />
         </div>
       </motion.div>
     </button>

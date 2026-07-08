@@ -84,7 +84,7 @@ const HeroScrollDemo = () => {
           {titleComponent}
           {/* IDE sits in a plain rounded card, no perspective/rotateX */}
           <div className="w-full rounded-2xl border-2 border-[#2e2b26] overflow-hidden shadow-2xl"
-               style={{ height: "520px" }}>
+               style={{ height: "min(520px, 75vh)" }}>
             <IDEWindow className="h-full" />
           </div>
         </div>
