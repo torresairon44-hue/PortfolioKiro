@@ -220,6 +220,53 @@ export const features = [
   { title: "Modern Stack", description: "Built with the latest frameworks and tools" },
 ];
 
+// ── Globe data ─────────────────────────────────────────────────────────────
+// Coordinates (lat, lng) mapped to each tech in the techStack array.
+// Used by GlobeDemo to place markers on the 3D globe.
+export const techLocations: [number, number][] = [
+  [37.7595, -122.4367],  // San Francisco — JavaScript / React heartland
+  [40.7128, -74.006],    // New York
+  [35.6762, 139.6503],   // Tokyo
+  [51.5074, -0.1278],    // London
+  [-33.8688, 151.2093],  // Sydney
+  [-33.9249, 18.4241],   // Cape Town
+  [25.2048, 55.2708],    // Dubai
+  [48.8566, 2.3522],     // Paris
+  [-23.5505, -46.6333],  // São Paulo
+  [52.52, 13.405],       // Berlin
+  [19.076, 72.8777],     // Mumbai
+  [1.3521, 103.8198],    // Singapore
+  [34.0522, -118.2437],  // Los Angeles
+  [55.7558, 37.6173],    // Moscow
+  [14.5995, 120.9842],   // Manila
+  [41.9028, 12.4964],    // Rome
+];
+
+// Arcs drawn between globe markers to show technology connections.
+export const globeArcs = [
+  {
+    id: "javascript-react",
+    from: [37.7595, -122.4367] as [number, number],
+    to: [35.6762, 139.6503] as [number, number],
+    label: "JavaScript → Next.js",
+  },
+  {
+    id: "react-typescript",
+    from: [40.7128, -74.006] as [number, number],
+    to: [51.5074, -0.1278] as [number, number],
+    label: "React → TypeScript",
+  },
+];
+
+// ── Contact form ───────────────────────────────────────────────────────────
+// Visme-hosted contact form embed URL.
+// Change this value here if you switch form providers — no component edits needed.
+export const contactFormUrl = "https://forms.visme.co/fv/p9nm70vw-q007qvd";
+
+// ── External API endpoints ─────────────────────────────────────────────────
+// Centralised here so switching API providers requires only one change.
+export const GITHUB_CONTRIBUTIONS_API = "https://github-contributions-api.jogruber.de/v4";
+
 export const skills = [
   "JavaScript",
   "React",

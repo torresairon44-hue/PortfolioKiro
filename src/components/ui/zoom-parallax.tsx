@@ -3,16 +3,43 @@
 import { useScroll, useTransform, motion, useMotionValueEvent, MotionValue } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 
-interface Image {
+// ─── Interface Segregation ────────────────────────────────────────────────────
+// Split into two focused types so consumers don't have to pass irrelevant props.
+// VideoImage: requires src + isVideo, mobileSrc is not applicable.
+// StaticImage: requires src, mobileSrc is optional for responsive swapping.
+// ZoomParallaxImage is the union — pass either shape.
+
+export interface VideoImage {
   src: string;
-  mobileSrc?: string;
+  isVideo: true;
   alt?: string;
-  isVideo?: boolean;
+  mobileSrc?: never; // videos don't have a separate mobile source
 }
 
-interface ZoomParallaxProps {
-  images: Image[];
+export interface StaticImage {
+  src: string;
+  isVideo?: false;
+  alt?: string;
+  mobileSrc?: string; // optional portrait version for mobile
 }
+
+export type ZoomParallaxImage = VideoImage | StaticImage;
+
+interface ZoomParallaxProps {
+  images: ZoomParallaxImage[];
+}
+
+// ── Per-image layout overrides ─────────────────────────────────────────────
+// Each entry maps to images[index]. Positions are expressed in vh/vw so they
+// scale with the viewport. Index 0 (the center/base image) has no override.
+const IMAGE_LAYOUTS: Record<number, string> = {
+  1: "[&>div]:!-top-[30vh] [&>div]:!left-[5vw] [&>div]:!h-[30vh] [&>div]:!w-[35vw]",
+  2: "[&>div]:!-top-[10vh] [&>div]:!-left-[25vw] [&>div]:!h-[45vh] [&>div]:!w-[20vw]",
+  3: "[&>div]:!left-[27.5vw] [&>div]:!h-[25vh] [&>div]:!w-[25vw]",
+  4: "[&>div]:!top-[27.5vh] [&>div]:!left-[5vw] [&>div]:!h-[25vh] [&>div]:!w-[20vw]",
+  5: "[&>div]:!top-[27.5vh] [&>div]:!-left-[22.5vw] [&>div]:!h-[25vh] [&>div]:!w-[30vw]",
+  6: "[&>div]:!top-[22.5vh] [&>div]:!left-[25vw] [&>div]:!h-[15vh] [&>div]:!w-[15vw]",
+};
 
 interface ScrollVideoProps {
   src: string;
@@ -87,14 +114,7 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
             <motion.div
               key={index}
               style={{ scale }}
-              className={`absolute top-0 flex h-full w-full items-center justify-center
-                ${index === 1 ? '[&>div]:!-top-[30vh] [&>div]:!left-[5vw] [&>div]:!h-[30vh] [&>div]:!w-[35vw]' : ''}
-                ${index === 2 ? '[&>div]:!-top-[10vh] [&>div]:!-left-[25vw] [&>div]:!h-[45vh] [&>div]:!w-[20vw]' : ''}
-                ${index === 3 ? '[&>div]:!left-[27.5vw] [&>div]:!h-[25vh] [&>div]:!w-[25vw]' : ''}
-                ${index === 4 ? '[&>div]:!top-[27.5vh] [&>div]:!left-[5vw] [&>div]:!h-[25vh] [&>div]:!w-[20vw]' : ''}
-                ${index === 5 ? '[&>div]:!top-[27.5vh] [&>div]:!-left-[22.5vw] [&>div]:!h-[25vh] [&>div]:!w-[30vw]' : ''}
-                ${index === 6 ? '[&>div]:!top-[22.5vh] [&>div]:!left-[25vw] [&>div]:!h-[15vh] [&>div]:!w-[15vw]' : ''}
-              `}
+              className={`absolute top-0 flex h-full w-full items-center justify-center ${IMAGE_LAYOUTS[index] ?? ""}`}
             >
               <div className="relative h-[25vh] w-[25vw]">
                 {isVideo ? (

@@ -16,9 +16,14 @@ const CERTS = [
   { src: "/images/uicert.png", label: "UI Certification" },
 ];
 
-const CARD_W = typeof window !== "undefined" && window.innerWidth < 400 ? 260 : 320;
-const CARD_H = typeof window !== "undefined" && window.innerWidth < 400 ? 180 : 220;
+// Auto-advance interval in ms
 const AUTO_INTERVAL = 3500;
+
+// Card dimensions — responsive defaults, updated on resize via useEffect
+const CARD_SIZES = {
+  small: { w: 260, h: 180 },  // < 400px viewport width
+  normal: { w: 320, h: 220 }, // >= 400px viewport width
+};
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -34,6 +39,25 @@ const CertificatesSection = ({ className }: CertificatesSectionProps) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
+
+  // ── Reactive card dimensions — updates on window resize ───────────────────
+  // Previously calculated once at module load time, which meant resizing the
+  // browser would leave the carousel with stale dimensions.
+  const getCardSizes = () =>
+    window.innerWidth < 400 ? CARD_SIZES.small : CARD_SIZES.normal;
+
+  const [cardDims, setCardDims] = useState(() =>
+    typeof window !== "undefined" ? getCardSizes() : CARD_SIZES.normal
+  );
+
+  useEffect(() => {
+    const handleResize = () => setCardDims(getCardSizes());
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const CARD_W = cardDims.w;
+  const CARD_H = cardDims.h;
 
   // Mouse parallax on the glow
   const mouseX = useMotionValue(0);

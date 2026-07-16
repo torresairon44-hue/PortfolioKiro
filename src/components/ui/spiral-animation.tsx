@@ -26,12 +26,31 @@ class AnimationController {
   private size: number
   private stars: Star[] = []
 
+  // Time (0–1) at which the spiral trail ends and the camera starts flying forward.
+  // Before this point: spiral draws. After: stars explode outward + camera travels.
   private readonly changeEventTime = 0.32
+
+  // Starting Z position of the camera. Negative = behind the origin.
+  // Stars are placed between cameraZ and cameraTravelDistance, so the camera
+  // flies through them as time progresses past changeEventTime.
   private readonly cameraZ = -400
+
+  // Total distance the camera travels forward through the star field (Z units).
   private readonly cameraTravelDistance = 3400
+
+  // Vertical offset of the "start dot" (the dot at the center of the spiral)
+  // in world units. Positive = slightly below center on screen.
   private readonly startDotYOffset = 28
+
+  // Perspective zoom factor. Higher = more zoomed in / narrower field of view.
+  // Controls how 3D world coords map to 2D screen coords: screenX = viewZoom * worldX / depth
   private readonly viewZoom = 100
+
+  // Total number of stars scattered through the 3D space.
   private readonly numberOfStars = 5000
+
+  // How many trail segments are drawn behind the spiral head each frame.
+  // More = longer, smoother tail. Higher cost per frame.
   private readonly trailLength = 80
 
   constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, dpr: number, size: number) {

@@ -2,27 +2,8 @@
 
 import { useRef, useEffect, useCallback, useState } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
-import { techStack } from "@/lib/constants";
+import { techStack, techLocations, globeArcs } from "@/lib/constants";
 import { Globe } from "@/components/ui/cobe-globe";
-
-const techLocations: [number, number][] = [
-  [37.7595, -122.4367],
-  [40.7128, -74.006],
-  [35.6762, 139.6503],
-  [51.5074, -0.1278],
-  [-33.8688, 151.2093],
-  [-33.9249, 18.4241],
-  [25.2048, 55.2708],
-  [48.8566, 2.3522],
-  [-23.5505, -46.6333],
-  [52.52, 13.405],
-  [19.076, 72.8777],
-  [1.3521, 103.8198],
-  [34.0522, -118.2437],
-  [55.7558, 37.6173],
-  [14.5995, 120.9842],
-  [41.9028, 12.4964],
-];
 
 const markers = techStack.map((tech, index) => ({
   id: tech.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
@@ -30,20 +11,7 @@ const markers = techStack.map((tech, index) => ({
   label: tech,
 }));
 
-const arcs = [
-  {
-    id: "javascript-react",
-    from: [37.7595, -122.4367] as [number, number],
-    to: [35.6762, 139.6503] as [number, number],
-    label: "JavaScript → Next.js",
-  },
-  {
-    id: "react-typescript",
-    from: [40.7128, -74.006] as [number, number],
-    to: [51.5074, -0.1278] as [number, number],
-    label: "React → TypeScript",
-  },
-];
+const arcs = globeArcs;
 
 const categories = [
   {

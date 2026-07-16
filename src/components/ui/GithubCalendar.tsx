@@ -2,6 +2,7 @@
 
 import { memo, useMemo, useState, useEffect, useId, useRef } from "react";
 import { cn } from "@/lib/cn";
+import { useGithubContributions } from "@/hooks/useGithubContributions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type ContributionLevel = 0 | 1 | 2 | 3 | 4;
@@ -20,8 +21,18 @@ export type ThemeColors = {
   level4: string;
 };
 export type CellShape = "rounded" | "circle";
-export type GithubCalendarProps = {
-  username?: string;
+
+// ─── Interface Segregation ────────────────────────────────────────────────────
+// Split into two focused interfaces so consumers only depend on what they need.
+//
+// GithubCalendarDisplayProps — pure display, no fetching.
+//   Use this when you already have ContributionData and just want to render it.
+//
+// GithubCalendarProps — extends display with optional username for auto-fetching.
+//   Use this when you want the component to fetch data by GitHub username.
+
+export type GithubCalendarDisplayProps = {
+  /** Pre-loaded contribution data. If provided, username fetch is skipped. */
   data?: ContributionData;
   startDate?: string;
   endDate?: string;
@@ -34,6 +45,11 @@ export type GithubCalendarProps = {
   showStats?: boolean;
   showLegend?: boolean;
   className?: string;
+};
+
+export type GithubCalendarProps = GithubCalendarDisplayProps & {
+  /** GitHub username to fetch contribution data for. Optional if data is provided directly. */
+  username?: string;
 };
 
 // ─── Built-in themes ──────────────────────────────────────────────────────────
@@ -98,23 +114,8 @@ function formatTooltipDate(dateStr: string): string {
 }
 
 // ─── API fetch ────────────────────────────────────────────────────────────────
-type APIResponse = {
-  total: Record<string, number>;
-  contributions: { date: string; count: number; level: number }[];
-};
-async function fetchContributions(username: string): Promise<ContributionData> {
-  const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}`);
-  if (!res.ok) throw new Error(`Could not fetch contributions for "${username}" (${res.status})`);
-  const json: APIResponse = await res.json();
-  const result: ContributionData = {};
-  for (const entry of json.contributions) {
-    result[entry.date] = {
-      level: Math.min(4, Math.max(0, entry.level)) as ContributionLevel,
-      count: entry.count,
-    };
-  }
-  return result;
-}
+// Moved to src/hooks/useGithubContributions.ts (Dependency Inversion principle).
+// The component no longer owns the data-fetching concern — it just uses the hook.
 
 // ─── Build calendar grid ──────────────────────────────────────────────────────
 function buildGrid(startDate: string, endDate: string, startsOnSunday: boolean) {
@@ -216,16 +217,14 @@ export const GithubCalendar = memo(function GithubCalendar({
   const [loading, setLoading] = useState(!!username);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
+  // Fetch contributions via the custom hook (data-fetching separated from UI)
+  const { data: hookedData, loading: hookLoading, error: hookError } = useGithubContributions(username);
+
   useEffect(() => {
-    if (!username) return;
-    setFetchedData(null);
-    setFetchError(null);
-    setLoading(true);
-    fetchContributions(username)
-      .then((d) => setFetchedData(d))
-      .catch((e) => setFetchError(e instanceof Error ? e.message : String(e)))
-      .finally(() => setLoading(false));
-  }, [username]);
+    setFetchedData(hookedData);
+    setLoading(hookLoading);
+    setFetchError(hookError);
+  }, [hookedData, hookLoading, hookError]);
 
   const data: ContributionData = dataProp ?? fetchedData ?? {};
 

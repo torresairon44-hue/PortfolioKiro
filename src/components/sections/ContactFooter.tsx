@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { siteConfig, navLinks, services } from "@/lib/constants";
+import { siteConfig, navLinks, services, contactFormUrl } from "@/lib/constants";
 import { Mail, Phone, MapPin, X, Code2 } from "lucide-react";
 
 /* ── Inline brand SVGs (lucide-react removed these in v0.400+) ── */
@@ -316,7 +316,7 @@ const ContactFooter = ({ className }: ContactFooterProps) => {
 
           <div className="animate-slide-up w-full h-full" onClick={() => setModalOpen(false)}>
             <iframe
-              src="https://forms.visme.co/fv/p9nm70vw-q007qvd"
+              src={contactFormUrl}
               width="100%"
               height="100%"
               style={{ border: "none", display: "block" }}

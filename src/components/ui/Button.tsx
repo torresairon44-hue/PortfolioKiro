@@ -10,6 +10,12 @@ interface ButtonProps {
   onClick?: () => void;
   target?: string;
   rel?: string;
+  /**
+   * Whether to show the arrow icon.
+   * Defaults to true for "primary", false for "secondary".
+   * Pass explicitly to override the variant default.
+   */
+  showArrow?: boolean;
 }
 
 const Button = ({
@@ -21,7 +27,10 @@ const Button = ({
   onClick,
   target,
   rel,
+  showArrow,
 }: ButtonProps) => {
+  // Resolve arrow visibility: explicit prop wins, otherwise follow variant default
+  const shouldShowArrow = showArrow !== undefined ? showArrow : variant === "primary";
   const baseStyles =
     "inline-flex items-center justify-center font-body font-bold text-[16px] leading-none uppercase rounded-[var(--radius-full)] h-[54px] transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]";
 
@@ -37,7 +46,7 @@ const Button = ({
   const content = (
     <>
       <span>{children}</span>
-      {variant === "primary" && (
+      {shouldShowArrow && (
         <span className="flex items-center justify-center size-[42px] rounded-full bg-neutral-black text-neutral-white">
           <ArrowIcon className="size-5" />
         </span>

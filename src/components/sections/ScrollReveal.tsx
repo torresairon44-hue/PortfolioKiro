@@ -6,6 +6,13 @@ import { cn } from "@/lib/cn";
 interface ScrollRevealProps {
   children: React.ReactNode;
   className?: string;
+  /**
+   * Height of the scroll container on desktop (e.g. "200vh").
+   * Controls how much scroll distance is needed to reveal the content.
+   * This prop is intentionally ignored on mobile — mobile uses
+   * IntersectionObserver instead of scroll-pinning, so extra height
+   * is not needed and would break the natural flow layout.
+   */
   height?: string;
   direction?: "left" | "right" | "up";
   mode?: "pin" | "fade";
